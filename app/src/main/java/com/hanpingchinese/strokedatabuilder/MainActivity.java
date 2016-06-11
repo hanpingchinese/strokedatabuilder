@@ -46,8 +46,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		Button buildStrokePacksZipButton = (Button) findViewById(R.id.buildButton);
-		buildStrokePacksZipButton.setOnClickListener(new View.OnClickListener() {
+		Button buildButton = (Button) findViewById(R.id.buildButton);
+		buildButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				try {
@@ -137,7 +137,7 @@ public class MainActivity extends Activity {
 					strokesDatFile.delete();
 
 					FileOutputStream fout = new FileOutputStream(strokesDatFile);
-					buildPluginZipInternal(fullStrokeDataMap, onlyAllowTheseHanziCps, fout);
+					writeStrokeData(fullStrokeDataMap, onlyAllowTheseHanziCps, fout);
 					fout.close();
 				}
 				catch (Exception e) {
@@ -170,7 +170,10 @@ public class MainActivity extends Activity {
 		return result;
 	}
 
-	protected static int buildPluginZipInternal(LinkedHashMap<Integer, byte[]> strokeDataMap, LinkedHashSet<Integer> onlyAllowTheseHanziCps, OutputStream strokesDatOut) throws Exception {
+	/**
+	 * @return Pair first: hanzi count (with stroke data), second: number of bytes written to output stream
+	 */
+	protected static Pair<Integer, Integer> writeStrokeData(LinkedHashMap<Integer, byte[]> strokeDataMap, LinkedHashSet<Integer> onlyAllowTheseHanziCps, OutputStream strokesDatOut) throws Exception {
 		int numHanziWritten = 0;
 
 		try {
@@ -210,7 +213,8 @@ public class MainActivity extends Activity {
 			strokesDatOut.write(indexOut.toByteArray());
 			strokesDatOut.write(dataOut.toByteArray());
 
-			return numHanziWritten;
+			int bytesWritten = 2 + indexOut.size() + dataOut.size();
+			return Pair.create(numHanziWritten, bytesWritten);
 		}
 		catch (Exception e) {
 			throw e;
