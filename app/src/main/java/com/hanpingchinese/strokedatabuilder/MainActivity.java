@@ -13,8 +13,6 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -124,7 +122,7 @@ public class MainActivity extends Activity {
 		};
 	}
 
-	protected void buildPluginZip(final LinkedHashSet<Integer> baseHanziCps, final LinkedHashSet<Integer> freeHanziCps) throws IOException, XmlPullParserException {
+	protected void buildPluginZip(final LinkedHashSet<Integer> baseHanziCps, final LinkedHashSet<Integer> onlyAllowTheseHanziCps) {
 		// run in a handler so that the UI can update (needs the onActivityResult to return)
 		new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 			@Override
@@ -139,7 +137,7 @@ public class MainActivity extends Activity {
 					strokesDatFile.delete();
 
 					FileOutputStream fout = new FileOutputStream(strokesDatFile);
-					buildPluginZipInternal(fullStrokeDataMap, null, fout);
+					buildPluginZipInternal(fullStrokeDataMap, onlyAllowTheseHanziCps, fout);
 					fout.close();
 				}
 				catch (Exception e) {
